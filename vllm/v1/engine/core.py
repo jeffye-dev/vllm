@@ -366,16 +366,7 @@ class EngineCoreProc(EngineCore):
         parent_process = psutil.Process().parent()
         engine_core: Optional[EngineCoreProc] = None
         try:
-            parallel_config: ParallelConfig = kwargs[
-                "vllm_config"].parallel_config
-            if parallel_config.data_parallel_size > 1:
-                # Set data parallel rank for this engine process.
-                parallel_config.data_parallel_rank = dp_rank
-                parallel_config.data_parallel_rank_local = local_dp_rank
-                engine_core = DPEngineCoreProc(*args, **kwargs)
-            else:
-                engine_core = EngineCoreProc(*args, **kwargs)
-
+            engine_core = EngineCoreProc(*args, **kwargs)
             engine_core.run_busy_loop()
 
         except SystemExit:

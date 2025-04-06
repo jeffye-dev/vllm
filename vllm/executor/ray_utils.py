@@ -335,10 +335,11 @@ def initialize_ray_cluster(
         logger.info("No current placement group found. "
                     "Creating a new placement group.")
         num_devices_in_cluster = ray.cluster_resources().get(device_str, 0)
+        world_size = parallel_config.world_size_across_dp
         # Log a warning message and delay resource allocation failure response.
         # Avoid immediate rejection to allow user-initiated placement group
         # created and wait cluster to be ready
-        if parallel_config.world_size > num_devices_in_cluster:
+        if world_size > num_devices_in_cluster:
             logger.warning(
                 "The number of required %ss exceeds the total "
                 "number of available %ss in the placement group.", device_str,
@@ -346,7 +347,7 @@ def initialize_ray_cluster(
         # Create a new placement group
         placement_group_specs: List[Dict[str, float]] = ([{
             device_str: 1.0
-        } for _ in range(parallel_config.world_size)])
+        } for _ in range(world_size)])
 
         # vLLM engine is also a worker to execute model with an accelerator,
         # so it requires to have the device in a current node. Check if

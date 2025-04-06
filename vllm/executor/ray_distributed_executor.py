@@ -194,7 +194,7 @@ class RayDistributedExecutor(DistributedExecutorBase):
             for bundle_id, bundle in enumerate(placement_group.bundle_specs):
                 if bundle.get(current_platform.ray_device_key, 0):
                     bundle_indices.append(bundle_id)
-            bundle_indices = bundle_indices[:self.parallel_config.world_size]
+            bundle_indices = bundle_indices[:self.parallel_config.world_size_across_dp]
 
         worker_metadata: List[RayWorkerMetaData] = []
         driver_ip = get_ip()
